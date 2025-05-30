@@ -1,9 +1,18 @@
-<script>
-import BaceButton from './BaceButton.vue'
-export default {
-  components: {
-    BaceButton,
-  },
+<script setup>
+import BaceButton from './components/BaceButton.vue'
+import { ref } from 'vue'
+const playerChoice = ref('') // выбор игрока
+const opponentChoice = ref('')
+
+const handlePlayerChoice = (choice) => {
+  playerChoice.value = choice
+
+  const choices = ['rock', 'scissors', 'paper']
+  opponentChoice.value = choices[Math.floor(Math.random() * 3)]
+}
+const resetGame = () => {
+  playerChoice.value = ''
+  opponentChoice.value = ''
 }
 </script>
 
@@ -18,13 +27,37 @@ export default {
       <div class="choice-label">your choice</div>
       <div class="choice-label">choice of opponent</div>
     </div>
+    <div class="choice-look">
+      <BaceButton form="square" :img="playerChoice || 'rock'" color="grey"></BaceButton>
+      <BaceButton form="square" :img="opponentChoice || 'scissors'" color="grey"></BaceButton>
+    </div>
+    <div class="result">
+      <BaceButton form="rectangle" text="reset-game" color="pink"></BaceButton>
+    </div>
     <div class="button-click">
-      <BaceButton form="square" img="rock"></BaceButton>
-      <BaceButton form="square" img="scissors"></BaceButton>
-      <BaceButton form="square" img="paper"></BaceButton>
+      <BaceButton
+        form="square"
+        img="rock"
+        color="green"
+        @click="handlePlayerChoice('rock')"
+      ></BaceButton>
+
+      <BaceButton
+        form="square"
+        img="scissors"
+        color="green"
+        @click="handlePlayerChoice('scissors')"
+      ></BaceButton>
+
+      <BaceButton
+        form="square"
+        img="paper"
+        color="green"
+        @click="handlePlayerChoice('paper')"
+      ></BaceButton>
     </div>
     <div class="finish">
-      <BaceButton form="rectangle" text="reset-game"></BaceButton>
+      <BaceButton form="rectangle" text="reset-game" color="pink" @click="resetGame"></BaceButton>
     </div>
   </header>
 </template>
@@ -86,6 +119,22 @@ header {
 }
 .button-click,
 .finish {
+  display: flex;
+  justify-content: center;
+  gap: 100px;
+  width: 100%;
+  font-size: 35px;
+  margin-top: 20px;
+}
+.choice-look {
+  display: flex;
+  justify-content: center;
+  gap: 100px;
+  width: 100%;
+  font-size: 35px;
+  margin-top: 20px;
+}
+.result {
   display: flex;
   justify-content: center;
   gap: 100px;
