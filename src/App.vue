@@ -3,26 +3,55 @@ import BaceButton from './components/BaceButton.vue'
 import { ref } from 'vue'
 const playerChoice = ref('') // выбор игрока
 const opponentChoice = ref('')
+const resultYou = ref(0)
+const resultOpp = ref(0)
+const gameResult = ref('')
 
 const handlePlayerChoice = (choice) => {
   playerChoice.value = choice
 
   const choices = ['rock', 'scissors', 'paper']
   opponentChoice.value = choices[Math.floor(Math.random() * 3)]
+  resultTim()
 }
 const resetGame = () => {
   playerChoice.value = ''
   opponentChoice.value = ''
+  gameResult.value = 'Start play'
+  resultYou.value = 0
+  resultOpp.value = 0
+}
+
+const resultTim = () => {
+  const p = playerChoice.value
+  const o = opponentChoice.value
+  if (p === o) {
+    gameResult.value = 'Draw'
+    return
+  }
+
+  if (
+    (p === 'rock' && o === 'scissors') ||
+    (p === 'scissors' && o === 'paper') ||
+    (p === 'paper' && o === 'rock')
+  ) {
+    gameResult.value = 'You won'
+    resultYou.value++
+  } else {
+    gameResult.value = 'You lost'
+    resultOpp.value++
+  }
 }
 </script>
-
 <template>
   <header>
     <h1 class="title">ROCKPAPERSCISSORS</h1>
+
     <div class="counters">
-      <div class="counter">2</div>
-      <div class="counter">1</div>
+      <div class="counter">{{ resultYou }}</div>
+      <div class="counter">{{ resultOpp }}</div>
     </div>
+
     <div class="choice">
       <div class="choice-label">your choice</div>
       <div class="choice-label">choice of opponent</div>
@@ -31,8 +60,8 @@ const resetGame = () => {
       <BaceButton form="square" :img="playerChoice || 'rock'" color="grey"></BaceButton>
       <BaceButton form="square" :img="opponentChoice || 'scissors'" color="grey"></BaceButton>
     </div>
-    <div class="result">
-      <BaceButton form="rectangle" text="reset-game" color="pink"></BaceButton>
+    <div class="result" v-if="gameResult">
+      <BaceButton form="rectangle" :text="'RESULT: ' + gameResult" color="pink"></BaceButton>
     </div>
     <div class="button-click">
       <BaceButton
@@ -66,10 +95,11 @@ const resetGame = () => {
 body {
   margin: 0;
   padding: 0;
+  min-height: 100vh;
 }
 
 header {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -78,6 +108,8 @@ header {
   align-items: center;
   padding: 20px 0;
   box-sizing: border-box;
+  z-index: 100;
+  height: 180px;
 }
 
 .title {
