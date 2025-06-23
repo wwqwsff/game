@@ -1,6 +1,7 @@
 <script setup>
-import BaceButton from './components/BaceButton.vue'
-import { ref } from 'vue'
+import BaseButton from './components/BaseButton.vue'
+import Counter from './components/Counter.vue'
+import { computed, ref } from 'vue'
 const playerChoice = ref('') // выбор игрока
 const opponentChoice = ref('')
 const resultYou = ref(0)
@@ -42,51 +43,52 @@ const resultTim = () => {
     resultOpp.value++
   }
 }
+const buttons = [
+  { id: 1, img: 'rock', choice: 'rock' },
+  { id: 2, img: 'scissors', choice: 'scissors' },
+  { id: 3, img: 'paper', choice: 'paper' },
+]
+const looks = computed(() => [
+  { id: 'player', img: playerChoice.value || 'rock' },
+  { id: 'opponent', img: opponentChoice.value || 'scissors' },
+])
 </script>
 <template>
   <header>
     <h1 class="title">ROCKPAPERSCISSORS</h1>
 
-    <div class="counters">
-      <div class="counter">{{ resultYou }}</div>
-      <div class="counter">{{ resultOpp }}</div>
-    </div>
-
+    <Counter :result-you="resultYou" :result-opp="resultOpp"> </Counter>
     <div class="choice">
       <div class="choice-label">your choice</div>
       <div class="choice-label">choice of opponent</div>
     </div>
+
     <div class="choice-look">
-      <BaceButton form="square" :img="playerChoice || 'rock'" color="grey"></BaceButton>
-      <BaceButton form="square" :img="opponentChoice || 'scissors'" color="grey"></BaceButton>
+      <BaseButton
+        v-for="look in looks"
+        :key="look.id"
+        form="square"
+        :img="look.img"
+        color="grey"
+      ></BaseButton>
     </div>
+
     <div class="result" v-if="gameResult">
-      <BaceButton form="rectangle" :text="'RESULT: ' + gameResult" color="pink"></BaceButton>
+      <BaseButton form="rectangle" :text="'RESULT: ' + gameResult" color="pink"></BaseButton>
     </div>
+
     <div class="button-click">
-      <BaceButton
+      <BaseButton
+        v-for="button in buttons"
+        :key="button.id"
         form="square"
-        img="rock"
+        :img="button.img"
         color="green"
-        @click="handlePlayerChoice('rock')"
-      ></BaceButton>
-
-      <BaceButton
-        form="square"
-        img="scissors"
-        color="green"
-        @click="handlePlayerChoice('scissors')"
-      ></BaceButton>
-
-      <BaceButton
-        form="square"
-        img="paper"
-        color="green"
-        @click="handlePlayerChoice('paper')"
-      ></BaceButton>
+        @click="handlePlayerChoice(button.choice)"
+      ></BaseButton>
     </div>
     <div class="finish">
-      <BaceButton form="rectangle" text="reset-game" color="pink" @click="resetGame"></BaceButton>
+      <BaseButton form="rectangle" text="reset-game" color="pink" @click="resetGame"></BaseButton>
     </div>
   </header>
 </template>
@@ -119,20 +121,6 @@ header {
   font-size: 38px;
   text-align: center;
   width: 100%;
-}
-
-.counters {
-  display: flex;
-  justify-content: center;
-  gap: 100px;
-  width: 100%;
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 50px;
-}
-
-.counter {
-  min-width: 60px;
-  text-align: center;
 }
 
 .choice {
